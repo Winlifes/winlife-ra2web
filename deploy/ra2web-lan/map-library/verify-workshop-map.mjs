@@ -1,0 +1,52 @@
+// Refresh only the original Winlife map's checks and semantic comparison.
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {loadNativeResources,scanMapCompatibility} from './build-catalog.mjs';
+import {compileContentReader,fingerprintMap} from './semantic-dedup.mjs';
+import * as codec from '../map-editor/map-codec.mjs';
+const root=path.resolve(process.argv[2]),maps=path.join(root,'maps');
+const read=name=>JSON.parse(fs.readFileSync(path.join(maps,name)));
+const save=(name,data)=>fs.writeFileSync(path.join(maps,name),JSON.stringify(data,null,2)+'\n');
+const sha=value=>createHash('sha256').update(value).digest('hex');
+const catalog=read('catalog.json'),index=read('game-index.json'),report=read('deduplication-report.json');
+const record=catalog.maps.find(map=>map.source==='winlife'&&map.file.startsWith('wl_winlife_'));assert.ok(record);
+const bytes=fs.readFileSync(path.join(maps,'files',record.file)),text=bytes.toString('utf8');
+assert.equal(sha(bytes),record.sha256);
+const config=JSON.parse(fs.readFileSync(path.join(root,'config.json')));
+const mod=JSON.parse(fs.readFileSync(path.join(root,'mods.json'))).mods.find(item=>item.id===config.forcedModId);
+const modPath=mod?.download?new URL(mod.download,'https://local.invalid/').pathname:'';
+const mirror=modPath&&!modPath.startsWith('/mod/')?{localForcedModArchive:'mod/'+modPath.split('/').at(-1)}:{};
+const native=await loadNativeResources(root,mirror),app=fs.readFileSync(path.join(root,'js/app.js'),'utf8');
+const scan=scanMapCompatibility({text,sourceMap:{source:{kind:'multiplayer_map'}},native,codec});
+assert.equal(scan.compatible,true,JSON.stringify(scan.reasons));
+const doc=codec.parseMap(text);assert.equal(doc.spawnLimit,16);assert.equal(doc.spawns.length,16);
+assert.equal(new Set(doc.spawns.map(p=>p.rx+','+p.ry)).size,16);
+assert.ok(doc.spawns.every((p,i)=>p.number===i&&codec.isPlayableCell(doc,p.rx,p.ry)));
+assert.equal(doc.terrain.size,32);assert.equal(doc.overlays.size,767);
+assert.ok([...doc.overlays.values()].every(item=>item.id===codec.OVERLAY_IDS.GEMS));
+const reader=compileContentReader(app),fingerprint=fingerprintMap(text,{reader,native,map:record});
+const previous=report.maps.find(map=>map.file.startsWith('wl_winlife_'));
+assert.ok(previous);for(const category of ['terrain','spawns','scripts'])assert.equal(previous.fingerprint.categories[category],fingerprint.categories[category],category);
+assert.ok(!report.maps.some(map=>!map.file.startsWith('wl_winlife_')&&map.fingerprint?.sha256===fingerprint.sha256));
+for(const group of report.groups)assert.ok(!group.members.some(map=>map.file===previous.file));
+for(const group of report.sameNameComparisons)assert.ok(!group.members.some(map=>map.file===previous.file));
+record.deduplication={version:1,groupId:fingerprint.sha256,representativeFile:record.file,isRepresentative:true,versionCount:1,categories:fingerprint.categories};
+const checked={file:record.file,comparedFile:record.file,title:record.title,players:16,compatible:true,fingerprint};
+report.maps=report.maps.map(map=>map.file.startsWith('wl_winlife_')?checked:map);
+const evidence={verifiedAt:new Date().toISOString(),file:record.file,sha256:record.sha256,previousFile:previous.file,
+  compatible:true,gemCells:doc.overlays.size,mines:32,minesPerPlayer:2,spawns:16,
+  mineResourceType:1,mineResourceName:'gems',legacyMinesDefaultToOre:true,terrainAndStartsPreserved:true,
+  nativeReader:reader.evidence,compatibility:scan,runtimeVerified:false};
+report.workshopMapUpdate={...evidence,compatibility:undefined};
+index.maps=index.maps.map(map=>map.file===record.file?{...map,deduplication:record.deduplication}:map);
+const teamMaps=catalog.maps.filter(map=>map.designId?.startsWith('winlife-team-river-8v8-v')).length;
+assert.equal(catalog.maps.length,600+teamMaps);assert.equal(index.maps.length,230+teamMaps);assert.equal(index.nativeDuplicates.length,31);
+save('catalog.json',catalog);save('game-index.json',index);save('deduplication-report.json',report);save('workshop-map-verification.json',evidence);
+const verification=read('compatibility-verification.json');
+verification.gameIndexBytes=fs.statSync(path.join(maps,'game-index.json')).size;
+verification.gameIndexSha256=sha(fs.readFileSync(path.join(maps,'game-index.json')));
+verification.catalogSha256=sha(fs.readFileSync(path.join(maps,'catalog.json')));
+verification.workshopMapVerification='/maps/workshop-map-verification.json';save('compatibility-verification.json',verification);
+console.log(JSON.stringify({file:record.file,gemCells:doc.overlays.size,mines:32,compatible:true}));

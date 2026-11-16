@@ -1,0 +1,18 @@
+{
+  "name": "winlife-ra2web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Winlife multiplayer server, map workshop and client extensions for RA2WEB",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "repository": {"type": "git", "url": "https://github.com/Winlifes/winlife-ra2web.git"},
+  "engines": {"node": ">=22"},
+  "workspaces": ["deploy/ra2web-lan/server"],
+  "scripts": {
+    "start": "node deploy/ra2web-lan/server/server.mjs",
+    "test": "node scripts/test.mjs",
+    "check": "node scripts/check-sources.mjs",
+    "maps": "node scripts/generate-maps.mjs"
+  },
+  "devDependencies": {"acorn": "8.14.0", "acorn-walk": "8.3.4"}
+}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Winlife · 红警地图 AI 制作规范</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#edf1eb;background:#111713;line-height:1.65}*{box-sizing:border-box}body{margin:0}a{color:#e4cd76;text-underline-offset:4px}main{max-width:1060px;margin:auto;padding:36px 28px 72px}header{display:flex;justify-content:space-between;gap:20px;padding-bottom:44px}header strong{letter-spacing:.12em;color:#c2cebf;font-size:13px}nav{display:flex;gap:22px;font-size:14px}h1{font-size:clamp(30px,5vw,48px);line-height:1.2;letter-spacing:-.04em;max-width:800px;margin:0 0 22px}h2{font-size:23px;margin:38px 0 14px}p{max-width:820px;color:#bfcbbe}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{color:#f0db98}.kicker{color:#d6bf70;font-size:13px;letter-spacing:.14em;margin-bottom:12px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 14px}.button{border:1px solid #4d594b;padding:11px 18px;border-radius:7px;text-decoration:none;color:#edf1eb;font-weight:600}.primary{background:#e0c875;color:#1e251b;border-color:#e0c875}.meta{font-size:13px;color:#a6b3a3;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{border:1px solid #344131;background:#172016;border-radius:9px;padding:20px}.card h3{margin:0 0 8px;font-size:18px}.card p{font-size:14px;margin:8px 0}.card a{margin-right:14px}.status{font-size:12px;color:#e4cd76}pre{background:#1b251a;border:1px solid #3c4938;padding:20px;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;color:#e5ebde;font-size:14px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #344131;padding:13px 12px}th{color:#d7e1d1}footer{margin-top:44px;border-top:1px solid #344131;padding-top:18px;font-size:13px;color:#a6b3a3}.links{display:flex;flex-wrap:wrap;gap:14px 24px}.intro{font-size:18px}@media(max-width:720px){main{padding:24px 18px 48px}header{padding-bottom:30px}.grid{grid-template-columns:1fr}nav{gap:12px}th,td{padding:10px 6px}pre{padding:14px}}
+</style></head><body><main>
+<header><strong>WINLIFE · MAP AUTHORING</strong><nav><a href="/">红警联机</a><a href="/map-editor/">地图工坊</a></nav></header>
+<div class="kicker">给其他 AI 的制作与验收资料</div><h1>把地图需求交给 AI，<br>把真实地图和验收证据带回来。</h1>
+<p class="intro">一套可下载、可执行的地图制作包：真实 <code>.map</code> 编码器、2 / 8 / 16 人示例、静态校验和原生解码交叉检查，以及实际开局的验收流程。无需接入模型 API。</p>
+<div class="actions"><a class="button primary" href="winlife-ra2-map-ai-1.0.0.zip" download>下载完整制作包 · __ZIP_SIZE__</a><a class="button" href="AGENTS.md">给 AI 的执行说明 ↗</a><a class="button" href="references/acceptance.md">查看怎么验收 ↗</a></div>
+<div class="meta">版本 1.0.0 · Node.js 22+ · 无第三方依赖<br>ZIP SHA256：<code>__ZIP_SHA__</code></div>
+<h2>直接把这段话交给其他 AI</h2><pre>请读取 https://ra.winlife.fun/map-ai/AGENTS.md，并下载该页面对应的完整制作包。
+按照格式与验收说明，用附带脚本生成真实 .map，交付设计文件、地图、预览和检查报告。
+有游戏操作能力时执行真实开局与联机验收，保存证据；未执行的测试标记 pending。
+不要把能解析、示意图或静态通过当成已经实战通过。
+
+我的地图需求：在这里填写人数、玩法、地形和布局。</pre>
+<h2>如何使用</h2><pre>node scripts/generate.mjs examples/8p-snow.json --out out/snow-v1
+node --test tests/kit.test.mjs</pre><p>在解压后的包根目录运行。生成器会打印真实地图、预览和报告路径；修改示例 JSON 即可迭代设计。</p>
+<h2>示例设计</h2><div class="grid">__EXAMPLES__</div>
+<p class="meta">示例已通过格式、原生数据解码和有限的设计近似检查。示例的游戏运行验收仍为 pending；预览是数据示意图。</p>
+<h2>“通过”具体代表什么</h2><table><thead><tr><th>层次</th><th>工具或操作</th><th>结论范围</th></tr></thead><tbody>
+<tr><td>静态检查</td><td>出生点、资源、对象、净空和地面通道</td><td>有限的几何与设计代理模型</td></tr>
+<tr><td>原生数据解码</td><td>当前游戏原始读取器交叉核对</td><td>地块、覆盖物、路点、出生点的数据一致</td></tr>
+<tr><td>实际游戏验收</td><td>导入、开局、建设、采矿、寻路、AI 与联机</td><td>必须实际操作、观察并保存证据</td></tr>
+</tbody></table>
+<h2>资料入口</h2><div class="links"><a href="README.md">使用说明</a><a href="AGENTS.md">AI 执行规范</a><a href="references/format-and-api.md">格式与 API</a><a href="references/acceptance.md">验收清单</a><a href="KIT-VERIFICATION.json">制作包验证记录</a><a href="SOURCES.json">原生来源与散列</a><a href="manifest-sha256.json">文件清单</a></div>
+<footer>面向 Winlife RA2WEB 0.87.3 及其 16 人扩展。9–16 人地图依赖本站扩展；其他平台兼容性另验。<br>所附源码保留原作署名并按 <a href="LICENSE">AGPL-3.0</a> 提供；游戏素材权利归各自所有者。</footer>
+</main></body></html>

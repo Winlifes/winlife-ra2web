@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "name": "Winlife 十六人开阔平原",
+  "author": "Winlife example",
+  "width": 128,
+  "height": 128,
+  "theater": "TEMPERATE",
+  "players": 16,
+  "intent": "十六人自由交战，四乘四出生点；使用 Winlife 扩展客户端。",
+  "spawns": [
+    {"position": [0.15, 0.15]}, {"position": [0.38, 0.15]}, {"position": [0.62, 0.15]}, {"position": [0.85, 0.15]},
+    {"position": [0.15, 0.38]}, {"position": [0.38, 0.38]}, {"position": [0.62, 0.38]}, {"position": [0.85, 0.38]},
+    {"position": [0.15, 0.62]}, {"position": [0.38, 0.62]}, {"position": [0.62, 0.62]}, {"position": [0.85, 0.62]},
+    {"position": [0.15, 0.85]}, {"position": [0.38, 0.85]}, {"position": [0.62, 0.85]}, {"position": [0.85, 0.85]}
+  ],
+  "homeResources": {"offsets": [[7, 5], [-7, -5]], "radius": 2, "value": 11},
+  "validation": {"baseClearRadius": 4, "minLaneWidth": 3, "homeResourceRadius": 18, "balanced": true, "resourceTolerance": 0.1}
+}

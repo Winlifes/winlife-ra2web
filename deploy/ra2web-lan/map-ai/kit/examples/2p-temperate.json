@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "name": "Winlife 双矿训练场",
+  "author": "Winlife example",
+  "width": 64,
+  "height": 64,
+  "theater": "TEMPERATE",
+  "players": 2,
+  "intent": "两人陆战，开放地面，每家两个相同矿区。",
+  "spawns": [{"position": [0.2, 0.5]}, {"position": [0.8, 0.5]}],
+  "homeResources": {"offsets": [[7, 5], [-7, -5]], "radius": 2, "value": 11},
+  "validation": {"baseClearRadius": 4, "minLaneWidth": 3, "homeResourceRadius": 18, "balanced": true, "resourceTolerance": 0.1}
+}

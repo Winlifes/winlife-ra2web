@@ -1,0 +1,8 @@
+{$RA2_SITE_ADDRESS} {
+    @backend path /wol /gserv /register /healthz
+    reverse_proxy @backend 127.0.0.1:18600
+    root * {$RA2_SITE_ROOT}
+    @configuration path /config.json /servers.json /version.json /maps/*.json /deployment/release.json
+    header @configuration Cache-Control "no-store"
+    file_server
+}

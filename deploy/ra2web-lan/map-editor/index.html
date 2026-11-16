@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111619"><title>地图工坊 · Winlife 红警联机</title>
+  <link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" title="回到红警联机"><span class="brand-mark">W</span><span>WINLIFE<small>红警地图工坊</small></span></a>
+    <div class="document-title"><span class="file-indicator"></span><span id="document-name">未命名地图</span><span id="dirty-indicator" class="muted"></span></div>
+    <nav class="top-actions" aria-label="文件操作">
+      <a class="button subtle" href="/maps/">地图库 <span>↗</span></a>
+      <button id="new-map" class="button subtle">新建</button>
+      <button id="import-map" class="button subtle">导入</button>
+      <button id="export-map" class="button">导出 .map</button>
+      <button id="use-map" class="button primary">加入我的游戏 <span>↗</span></button>
+    </nav>
+    <input id="file-input" type="file" accept=".map,.mpr,.yrm,.yro" hidden>
+  </header>
+  <main class="workspace">
+    <aside class="tools-panel" aria-label="地图工具">
+      <div class="panel-heading"><span>编辑工具</span><span class="eyebrow">TOOLS</span></div>
+      <a id="map-ai-guide" class="button" style="margin:0 12px 14px" href="/map-ai/" target="_blank" rel="noopener noreferrer" title="给其他 AI 的地图生成规范、制作包和验收清单">AI 地图生成指南 ↗</a>
+      <div class="tool-grid" id="tool-grid">
+        <button class="tool active" data-tool="select" title="选择 / 查看地块"><span>↖</span>选择</button>
+        <button class="tool" data-tool="land" title="绘制平地"><span>▱</span>平地</button>
+        <button class="tool" data-tool="water" title="绘制水域"><span>≈</span>水域</button>
+        <button class="tool" data-tool="ore" title="放置矿石"><span class="ore-glyph">◆</span>矿石</button>
+        <button class="tool" data-tool="gems" title="放置宝石"><span class="gem-glyph">✦</span>宝石</button>
+        <button class="tool" data-tool="trees" title="放置树木"><span>♠</span>树木</button>
+        <button class="tool" data-tool="spawn" title="设置玩家出生点"><span>⚑</span>出生点</button>
+        <button class="tool" data-tool="building" title="放置中立建筑"><span>▣</span>建筑</button>
+        <button class="tool" data-tool="raise" title="升高地块"><span>⌃</span>升高</button>
+        <button class="tool" data-tool="lower" title="降低地块"><span>⌄</span>降低</button>
+        <button class="tool" data-tool="sample" title="从原图采样地块"><span>⊹</span>取样</button>
+        <button class="tool" data-tool="erase" title="清除资源、树木与中立建筑"><span>◇</span>清除</button>
+      </div>
+      <section class="tool-settings">
+        <label for="brush-size">画笔大小 <output id="brush-output">1 × 1</output></label>
+        <input id="brush-size" type="range" min="1" max="9" step="2" value="1">
+        <div id="spawn-settings" hidden><label for="spawn-number">出生点编号</label><select id="spawn-number"></select><p class="help">在地块上点击可移动该玩家的出生点。</p></div>
+        <div id="building-settings" hidden><label for="building-kind">中立建筑</label><select id="building-kind"><option value="CAOILD">科技油井</option><option value="CAHOSP">科技医院</option><option value="CAAIRP">科技机场</option><option value="CAOUTP">科技维修站</option></select></div>
+        <div id="tree-settings" hidden><label for="tree-kind">树木种类</label><select id="tree-kind"><option value="T01">树木 01</option><option value="T02">树木 02</option><option value="T03">树木 03</option></select></div>
+      </section>
+      <div class="tool-help"><span class="keycap">滚轮</span> 缩放<br><span class="keycap">中键 / 空格</span> 拖动<br><span class="keycap">Ctrl / ⌘ Z</span> 撤销</div>
+      <div class="local-note"><span>◉</span><p>草稿自动保存在当前浏览器。<br>导出地图可分享给其他玩家。</p></div>
+    </aside>
+    <section class="canvas-panel" aria-label="地图画布">
+      <div class="canvas-toolbar"><div><span class="live-dot"></span><span id="canvas-label">温带 · 新建地图</span></div><div class="canvas-controls"><button id="undo" title="撤销" aria-label="撤销">↶</button><button id="redo" title="重做" aria-label="重做">↷</button><span class="divider"></span><button id="toggle-grid" class="toggled" title="切换网格" aria-label="切换网格">▦</button><button id="fit-map" title="适应画布" aria-label="适应画布">⤢</button><span id="zoom-label">100%</span></div></div>
+      <canvas id="map-canvas" tabindex="0" aria-label="等距地图编辑画布"></canvas>
+      <div id="loading-overlay" class="canvas-overlay"><div class="spinner"></div><span>正在准备地图…</span></div>
+      <div class="canvas-watermark">WINLIFE <span>MAP WORKSHOP</span></div>
+      <div id="hover-hint" hidden></div>
+    </section>
+    <aside class="properties-panel" aria-label="地图属性">
+      <div class="panel-heading"><span>地图属性</span><span class="eyebrow">PROPERTIES</span></div>
+      <form id="map-properties" autocomplete="off">
+        <label for="map-name">地图名称</label><input id="map-name" maxlength="80" value="我的新地图">
+        <label for="map-author">作者</label><input id="map-author" maxlength="80" placeholder="输入作者昵称">
+        <div class="property-pair"><div><label for="map-players">玩家数</label><select id="map-players"></select></div><div><label>地形</label><div id="theater-label" class="readout">温带</div></div></div>
+        <label>地图大小</label><div id="map-size" class="readout">64 × 64</div>
+        <button id="apply-properties" type="submit" class="button full-width">应用属性</button>
+      </form>
+      <section class="property-section"><h2>出生点 <span id="spawn-count" class="count">0</span></h2><div id="spawn-list" class="spawn-list"></div><p class="help">每位玩家需要独立、可通行且有足够空间的出生地块。</p></section>
+      <section class="property-section"><h2>地块检查</h2><dl class="cell-details"><div><dt>坐标</dt><dd id="cell-coords">—</dd></div><div><dt>高度</dt><dd id="cell-height">—</dd></div><div><dt>瓦片</dt><dd id="cell-tile">—</dd></div><div><dt>资源 / 物体</dt><dd id="cell-content">—</dd></div></dl></section>
+      <section class="property-section"><h2>地图检查 <span id="validation-count" class="count">0</span></h2><ul id="validation-list" class="validation-list"></ul></section>
+      <p class="help original-content-note">导入地图的原有脚本、触发器和其他配置会保留。画布以地形示意显示，不替代游戏内的实际美术预览。</p>
+    </aside>
+  </main>
+  <footer class="statusbar"><span><span class="live-dot"></span><span id="status-message">准备就绪</span></span><span id="save-status">本地草稿</span><span id="coordinate-status">X — · Y —</span></footer>
+  <div id="toast" role="status" hidden></div>
+  <dialog id="new-dialog"><form id="new-form"><div class="dialog-heading"><span class="eyebrow">NEW BATTLEFIELD</span><h1>创建你的战场</h1><p>从平地开始，布置资源与玩家出生点。</p></div><label for="new-name">地图名称</label><input id="new-name" value="我的新地图" maxlength="80" required><div class="property-pair"><div><label for="new-width">宽度</label><input id="new-width" type="number" min="32" max="160" value="64" required></div><div><label for="new-height">高度</label><input id="new-height" type="number" min="32" max="160" value="64" required></div></div><div class="property-pair"><div><label for="new-theater">地形</label><select id="new-theater"><option value="TEMPERATE">温带草地</option><option value="SNOW">雪地</option></select></div><div><label for="new-players">玩家数</label><select id="new-players"></select></div></div><div class="dialog-actions"><button id="cancel-new" type="button" class="button subtle">取消</button><button class="button primary" type="submit">创建地图</button></div></form></dialog>
+  <dialog id="use-dialog"><div class="dialog-heading"><span class="eyebrow">READY FOR BATTLE</span><h1>地图已加入我的游戏</h1><p>在当前浏览器刷新游戏，进入建房或单机地图列表，即可按地图名称找到它。联机开局时由房主自动向其他玩家传送地图。</p></div><div class="dialog-actions"><button id="close-use" class="button subtle">继续编辑</button><a class="button primary" href="/" target="_blank" rel="noopener">打开红警联机 ↗</a></div></dialog>
+  <script type="module" src="./editor.mjs"></script>
+</body>
+</html>

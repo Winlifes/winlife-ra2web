@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.map binary
+*.png binary
+*.zip binary

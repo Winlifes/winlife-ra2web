@@ -1,0 +1,475 @@
+# English base title | Chinese display name. Keep filenames and original map bytes.
+A Hill Between|山丘之间
+Across the Frost|穿越冰霜
+Alaskan Oil Spill|阿拉斯加油矿
+Alliance Campaign Mission 1|同盟战役任务一
+Allied Campaign Mission 1|盟军战役任务一
+Allied Campaign Mission 2|盟军战役任务二
+Allied Campaign Mission 3|盟军战役任务三
+Amazona Delta|亚马逊三角洲
+Ancient Dune|远古沙丘
+Arabian Oasis|阿拉伯绿洲
+Arctic Circle|北极圈
+Bajor|贝久星
+Big Little Lake|湖泊之战
+Blockade|封锁线
+Blood Feud|世仇
+Bongo|邦戈
+Boom|轰鸣
+Breaking Bad|绝命之地
+Brute|狂兽
+Bull Run|奔牛
+Caladan|卡拉丹
+Carnival|狂欢节
+Castle|城堡
+Chimp Frenzy|猩猩狂潮
+Cloud Nine|九重天
+Cold War|冷战
+ColdWar Survival - RDF Mod|冷战生存（RDF 模组）
+Dannath Revisited|重返丹纳斯
+Deadman's Ridge|缆桩脊
+Demo|演练场
+Divide Freezes Over|冰封分界
+Doom|末日
+Double Dip Dilemna|双重困境
+Downhill Rush|急速下坡
+Dry Heat|酷热干旱
+Dune Patrol|沙丘巡礼
+Dusk Ravine|暮色峡谷
+Dust Bowl|黄尘地带
+Dustbowl|黄尘地带
+Eclipsed Horizons|日蚀地平线
+El Dorado|黄金国
+Emerald Island|翡翠岛
+Equinox|昼夜平分
+Estamina|埃斯塔米纳
+Face Down|正面交锋
+Fjord|峡湾
+Glowing Waters|流光之水
+Hail Mary|万福玛利亚
+Happy Trails|快乐踪迹
+Hard Survival|极限生存
+Hidden Valley|隐秘山谷
+Hidden Valley II|隐秘山谷二
+Impasse|绝境
+Isle of War|岛屿之战
+JawsRIP|巨口深渊
+Jeen Strike|吉恩突袭
+Jibal al Sheikhl|谢赫山
+Jurbarkcity|尤尔巴卡斯城
+King's Hill|王者之丘
+Kong|金刚
+Lake Blitzen|不列兹然湖
+Lake Yuron|尤伦湖
+Lanaeris|拉奈里斯
+Landmarks|地标
+Let There Be Fight|开战吧
+LgndFan|传奇之地
+Liberty Island|自由岛
+Little Big Bay|大小海湾
+Little Big Lake|湖泊之战
+Little Piece of Dune|一片沙丘
+Loaded Barrel|满载的油桶
+MTL_BLITZ2_V2.1|蒙特利尔闪击二（2.1版）
+Malibu Cliffs|马里布悬崖
+May Day|拯救行动
+Mayday|拯救行动
+Meat Grinder|生死斗
+Mindfields|心灵战场
+Momento|瞬间
+Montana DMZ|蒙大拿非军事区
+Morningtide|晨潮
+Mummy|木乃伊
+New Heights|新顶点
+Nexus City|枢纽之城
+Oasis|绿洲
+Official Tournament Map|正式锦标赛地图
+Official Tournament Map A|正式锦标赛地图甲
+Official Tournament Map B|正式锦标赛地图乙
+Official Tournament Map D|正式锦标赛地图丁
+Official Tournament Map P|正式锦标赛地图丙
+Official Tournament Map Q|正式锦标赛地图戊
+Outbreak|爆发
+Paika|派卡
+Panic in Kazakhstan|哈萨克危机
+Paradropia|空降之地
+Paris Revisited|重返巴黎
+Peak of Perfection|完美之巅
+Penumbra|半影
+Pickaxe|矿镐
+Pinch Point|夹点
+Pinch Points|夹点
+Pirate Bay|海盗湾
+Pirates Paradise|海盗乐园
+Poltergeist|吵闹鬼
+Prime|源点
+Proving Grounds|试验地
+Quick Sand|流沙
+Reconcile|调和
+Remote Control|远程控制
+Revenant|亡魂归来
+River Divide|分水岭
+River Rampage|大河奔流
+River Riot|河畔暴动
+Sahara Mirage|撒哈拉幻影
+Sandstorm|沙尘暴
+Sekigahara DMZ|关原非军事区
+Sen River|森河
+Skyrim Shot|天际狙击
+Snow Valley|雪谷
+SnowMap|雪地战场
+South Pacific|南太平洋
+Sovereign Land|君王大陆
+Soviet Campaign Mission 1|苏军战役任务一
+Soviet Campaign Mission 2|苏军战役任务二
+Soviet Campaign Mission 3|苏军战役任务三
+Spark|火花
+Specific Island|独特之岛
+Speed Demon|速度之魔
+Splendor|壮丽之地
+Splinterstrike|碎片突袭
+Split Level|分裂雪地
+Stardusk|星暮
+Stormy Weather|暴风天
+Strobe|频闪
+Supply Crisis|补给危机
+Surge|激流
+Survival In Razadonia|拉扎多尼亚生存战
+Survive Death R3|绝境求生（第三修订版）
+Svalbard|斯瓦尔巴群岛
+Tellar Prime|特拉主星
+Texas|得克萨斯
+The Alamo|阿拉莫
+The Burg|堡城
+The Challenger|挑战者
+The Chrono Surprise|超时空奇袭
+The Doofus Omnibus|奇趣战场
+The Path More Traveled|征途
+The Path More Traveled By|征途
+Thin Ice|薄冰
+Thunder Dome|雷霆竞技场
+Tiger Bay|虎湾
+Tikal|蒂卡尔
+Toothpick|细针
+Tropic Thunder|热带惊雷
+Tubac|图巴克
+Tundra|冻原
+Twin Peaks|双峰
+Under Pressure|压力之下
+Unearthed|破土而出
+Urban Marine|都市陆战
+Urban Rush|城市突击战
+Volley|齐射
+Watering Hole|水源地
+Yellowstone|黄石
+Yin Yang|阴阳
+YinYang|阴阳
+Yuri Campaign Mission 1|尤里战役任务一
+Yuri Campaign Mission 2|尤里战役任务二
+Yuri Campaign Mission 3|尤里战役任务三
+Breakaway|脱逃
+Breakwater Isles|防波群岛
+Canyon Fodder|峡谷战争
+Cliffs Of Pandemonium|混乱悬崖
+Frigid Triangle|寒冰三角
+Killer Instinct|杀手本能
+Loop|环路
+Survive It|生存挑战
+Top o'the Hill|山顶对决
+Verschneit|白雪覆盖
+Yuri's Plot|尤里的阴谋
+Alaskan Outback|阿拉斯加荒野
+Anytown, Amerika|美国小镇
+Arctic Poppa Zone|北极战区
+Arena|竞技场
+Artvin|阿尔特温
+Austin, TX|奥斯汀
+Barrens|荒芜之地
+Battle of Ardee Bay|阿迪湾之战
+Bolu|博卢
+Bonanza|巨富
+Brink of Disaster|灾难边缘
+Canyon Sight|峡谷瞭望
+Carville's Convoy|卡维利护航舰队
+Caverns of Siberia|西伯利亚洞穴
+Cellular|蜂巢
+Chill of the Bridges|寒桥
+Circuit Board|电路板
+City Under Siege|围攻之都
+Cliffside Slide|悬崖滑道
+Coldest Peak|冰冷山峰
+Copacabana|科帕卡巴纳
+Country Swing|乡村乐
+CrossRoad Island|十字路口岛
+CruzerLand|克鲁泽之地
+Cryo Zone|极寒地带
+DC Uprising|特区暴动
+Darmok|达莫克
+Dawn of Peril|危险黎明
+Deadman Freezes Over|冰封缆桩脊
+Death Valley Girl|死亡谷女孩
+Deep Freeze|深度冻结
+Defend Liberty|保卫自由
+Depth Charge|深水炸弹
+Desert Exile|沙漠流放
+Desert Island|荒岛
+Distant Quasar|遥远类星体
+Divide and Conquer|分而治之
+Dog Water|劣水之地
+Dorado Descent|多拉多侵袭
+Double Trouble|双重麻烦
+Downtown, Cityville|城市中心
+Eastbound Roads|东行之路
+Edd Flight Zone|埃德飞行区
+El Zeddo|泽多
+Eskisehir|埃斯基谢希尔
+Eventide|黄昏
+Face Of Death|死亡面孔
+Fierce Battle|激战
+Forest Frontiers|森林边界
+Four Corners|四角战场
+Frostbite|霜寒
+Frostborne Isles|霜生群岛
+Frozen Fate|冰封命运
+Gebze|盖布泽
+Genie's Wish|神灯之愿
+Get To The Chopper|奔向直升机
+Golden State FWY|加州高速公路
+Golden State Freeway|加州高速公路
+Golden State Valley|加州山谷
+Gora|戈拉
+Green Valley|绿色山谷
+Ground Zero|爆心
+HCKid Runway|童心跑道
+Hammer and Sickle|正面冲突
+Hasta La Vista|再会
+Hatay|哈塔伊
+Head for the Hills|山丘对决
+Heartland|心脏地带
+Heck Freezes Over|冰天雪地
+Ice Bones|冰骨
+Interstellar|星际空间
+Invasion Confirmed|侵略消息获得证实
+Isle Of Oades|奥德斯岛
+Jalad at Tanagra|塔纳格拉的贾拉德
+Jeen Descent|吉恩降临
+Jungle of Vietnam|越南丛林
+Karabuk|卡拉比克
+Kars|卡尔斯
+Kayseri|开塞利
+King Of The Beach|海滩之王
+Konya|科尼亚
+Kwos Prime|夸斯主星
+Lake Island|湖心岛
+Lakeside Plateaus|湖畔高原
+Lazul Help Ur Guy|拉祖尔援军
+Limbo of the Lost|失落边境
+Little Piece of Island|一片小岛
+Lloyd's Ashen Fields|劳埃德灰烬原野
+Loktak Survival - RDF Mod|洛克塔克生存（RDF 模组）
+Lost Lake|失落之湖
+Lowlands|低地
+Lunar Survival II|月面生存二
+Lunar Survival III|月面生存三
+Manhattan Mayhem|曼哈顿乱战
+Marathon (4)MapsIn(1)|马拉松（四图合一）
+Mardin|马尔丁
+Market square|集市广场
+Minden|明登
+Mini Heck|迷你冰天雪地
+Mini Jungle|迷你丛林
+Moon Patrol|月面巡逻
+Morpheus|梦神
+Mount Olympus|奥林巴斯山
+Night Shade|夜影
+No Rest for the Wicked|恶人无眠
+No Wimps|强者之地
+North Waves|北方浪潮
+Oceanside|海滩
+Offense Defense|攻击与防御
+Oil In Center|中心油田
+Oil Island|石油岛
+Oil Mountain|石油山
+Oil Town|石油小镇
+Oil Valley|石油山谷
+Olaugh|奥劳
+Otters Revenge|水獭复仇
+Pacific Heights|太平洋顶点
+Pamukkale|棉花堡
+Park of Vytautas the Great|维陶塔斯大公园
+Parkside Gardens|公园花苑
+Paved Approach|铺路前行
+Phasing Worlds|相位世界
+Pioneer Peak|先锋
+REKOOOL FIRE - 2020 [2v2]|狂欢烈火（2020版，二对二）
+REKOOOL KALINKA|狂欢喀秋莎舞曲
+Rasputin|拉斯普京
+Red Valley|虹谷
+Rockets Red Glare|发射中的火箭
+Rocky Sighting|岩地视野
+Roundhouse Kick|回旋踢
+Rush Hour|高峰时刻
+Scorpion Trail|蝎子小径
+Sea of Isolation|孤立之海
+Sector 9|第九区
+Show Down Arena|决战竞技场
+Shrapnel Mountain|榴霰弹堆
+Sink or Swim|成事在人
+Sinkhole|污水坑
+Skirmish Park|遭遇战公园
+Snow Nitro|雪地疾驰
+Snow Patrol|雪地巡逻
+Snow Plow|铲雪车
+SnowDrop|雪花
+Snowball's Chance|雪地生机
+Soul of Sai|赛之魂
+Space Race|太空竞赛
+Stadium of Marcana|马拉卡纳体育场
+Stand Your Ground|坚守阵地
+Step By Step|步步为营
+Stomp The Comp|踏平电脑
+Stormy LuKeZ|卢克兹风暴
+Strategic Compass|战略罗盘
+Strip Mine|露天矿场
+Stronghold|要塞
+Sunset Riders|落日骑兵
+Survival Of The Fittest|适者生存
+Symmetrical Survival|对称生存
+Tanya's Training Grounds|谭雅的训练场
+Temba|滕巴
+The Maelstrom|大漩涡
+The Spirit of Mojo One|魔法一号之魂
+Tiburon|蒂布龙
+Tidehunters|猎潮者
+Tokai|东海
+Tower of Power|电塔
+Trabzonspor|特拉布宗
+Treetop Hills|树梢丘陵
+Tsunami|海啸
+Turfwar|地盘争夺战
+Tutankhamun|图坦卡蒙
+Unrepentant|顽冥不灵
+V for Vendetta|复仇之战
+Valley of Gems|宝石山谷
+Village Swing|村庄之歌
+Well of Wealth|财富之井
+Yalova|亚洛瓦
+Yuri's Command Post|尤里指挥所
+Battle Fortress Revenge|战斗要塞复仇
+Mount Rush More|拉什莫尔山
+Penta Bay 2.0|五角湾（2.0版）
+T Vs B  Survival - RDF Mod|上下对决生存（RDF 模组）
+Alaskan Gem Rush|阿拉斯加宝石潮
+All The Fury|怒火全开
+Andalusia|安达卢西亚
+Ant Arctic|南极冰原
+Arena 33 Forever|永恒竞技场三十三
+Army of the Potomac|波多马克之师
+Bay of Pigs|猪猡湾
+Bering Strait|白令海峡
+Bermuda Triangle|百慕大三角洲
+Big Grinder|大型生死斗
+Bridge The Gap [RM]|架桥越隙（重制版）
+Bridging the Gap|填补裂隙
+Crushed Ice|碎冰
+DEFCON 6|六级戒备
+East vs Best|东方对决
+Field and Stream|田野与溪流
+Grand Gulch|大峡谷
+High Explosive Round|高爆弹
+Ice Age|冰河时代
+Islands on the Land|陆地上的小岛
+Kalifornia|加州
+Loxodonta|非洲象
+Magma|岩浆
+Mini TOE|迷你埃及之旅
+Monument Valley|纪念碑谷
+REKOOOL - ALL STARS ORIGINAL|狂欢全明星（原版）
+REKOOOL FIRE - 2020 - 3v3 Pro|狂欢烈火（2020版，三对三专业版）
+REKOOOL KATUSHA|狂欢喀秋莎
+Rogues' Arena|恶徒竞技场
+Sedona Pass|塞多纳山口
+Sekigahara|关原
+Severnaya|北方基地
+Sharp Blade|利刃
+Siberian Wastes|西伯利亚荒原
+Streets of Gold|黄金之街
+Tour of Egypt|埃及之旅
+Tour of Egypt [NO PYRAMID]|埃及之旅（无金字塔）
+Transylvania Trouble|特兰西瓦尼亚危机
+Triple Crossed|三重交叉
+Whistler|惠斯勒
+Wild Animal Park|野生动物园
+Iron Prison Revival|铁狱重生
+A Path Beyond II|超越之路二
+Australia|澳大利亚
+Black Sea|黑海
+Boiling Point 1.0|沸点（1.0版）
+Bridged Basin|架桥盆地
+Cliffs of Mongolia|蒙古悬崖
+Clover|四叶草
+Corwick Forest|科威克森林
+Death trap|死亡陷阱
+Device|装置
+Don't Step on The Crocodile|别踩鳄鱼
+Floating Fortress|浮空堡垒
+Fountain of Youth|青春之泉
+Glacial Plates|冰川板块
+Grand Crevice|大裂谷
+Heck|冰天雪地
+Hex Bay|六角湾
+Highway Borealis|极光公路
+Invasion|入侵
+Irvine, California|加州尔湾
+Jungle|丛林
+Malaboo Bay|马里布海湾
+Mayflower FFA|五月花（自由混战）
+Mayflower Freezes Over|冰封五月花
+Mayflower [Original]|五月花（原版）
+Mayflower [Rebalanced]|五月花（再平衡版）
+Monster Movie|怪兽电影
+Near Ore Far|咫尺天涯
+Oceania|大洋洲
+Octo Bay|八角湾
+Oil Bonus Coolissy!|酷利西石油奖励
+Oil Pipeline|输油管线
+Oil with Bonus! [LKZ Original]|石油奖励（卢克兹原版）
+Pitfalls|陷阱
+Polyanthus|报春花
+Powder Keg|爆裂物
+REKOOOL GANDZIA|狂欢甘迪亚
+Russian Roulette|俄国轮盘
+Sonic Highways|音速公路
+Storm|风暴
+Territorial Imperative|领土争夺
+The Eye|风暴之眼
+The Oil In The Center Of The World x2|世界中心油田（双倍）
+The Oil With Bonus EURASIA|欧亚石油奖励
+The Oil With Bonus EURASIA [NO NUKE]|欧亚石油奖励（无核弹）
+The Oil With Bonus EURASIA [NO NUKE] [TEAM]|欧亚石油奖励（无核弹组队版）
+The Oil With Bonus EURASIA [TEAM]|欧亚石油奖励（组队版）
+Trailer Park|拖车公园
+Upper Decker|甲板室后座
+Valley of the Exiles|流亡者山谷
+Winter Wind|凛冬之风
+X Isle|未知岛
+Yellow Snow Gardens|黄雪花园
+all01umd|盟军战役：光阴似箭
+all02umd|盟军战役：好莱坞梦一场
+Broken Heartland 2.0 Crazy Ai v3C|破碎心脏地带（2.0版，疯狂电脑3C版）
+Co-op: Russian Base v1.8B AM/GER/UK..RU/CUBA|合作：俄军基地（1.8B版，多国对抗）
+Lost World (4) Crazy Ai v1|失落世界（四人，疯狂电脑第一版）
+Mission: Quantum (4)|任务：量子（四人）
+Mission: Apocalypse (6)|任务：天启（六人）
+Operation: Continent (4)|行动：大陆（四人）
+Operation: Dirt Roads (4)|行动：土路（四人）
+Operation: Kill the Hill (4)|行动：夺取山丘（四人）
+Operation: Rivers (4)|行动：河流（四人）
+Operation: Wild Russia (6) v3|行动：狂野俄罗斯（六人，第三版）
+Survival: Dead City Specialist v1.5N|生存：死城专家（1.5N版）
+Survival: Pine Forest 2.0I Specialist|生存：松林专家（2.0I版）
+Mazed Out|迷宫围城
+Maze|冰雪迷宫
+Maze Wire Fence|铁丝围栏迷宫
+Daedalus Maze|代达罗斯迷宫
+Labyrinth|岔路迷宫

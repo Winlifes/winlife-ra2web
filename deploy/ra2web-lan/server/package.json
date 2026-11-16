@@ -1,0 +1,14 @@
+{
+  "name": "ra2web-lan-server",
+  "version": "0.7.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test *.test.mjs"
+  },
+  "dependencies": {
+    "ws": "8.21.3"
+  },
+  "license": "AGPL-3.0-or-later"
+}
