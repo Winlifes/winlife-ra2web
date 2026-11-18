@@ -55,7 +55,7 @@
       status=document.createElement('div');status.id='winlife-reconnect-status';status.setAttribute('role','status');
       Object.assign(status.style,{position:'fixed',zIndex:'100001',left:'50%',top:'24px',transform:'translateX(-50%)',maxWidth:'calc(100vw - 32px)',padding:'16px 20px',background:'#141b20f5',color:'#f0cc83',border:'1px solid #9b8048',borderRadius:'8px',boxShadow:'0 10px 40px #0008',font:'15px/1.6 system-ui,sans-serif',cursor:'default'});
       status.append(document.createElement('span'),document.createElement('button'));document.body.append(status);
-      const button=status.lastChild;button.textContent='返回大厅';Object.assign(button.style,{marginLeft:'18px',padding:'6px 12px',cursor:'pointer'});
+      const button=status.lastChild;button.textContent='退出对局';Object.assign(button.style,{marginLeft:'18px',padding:'6px 12px',cursor:'pointer'});
     }
     status.firstChild.textContent=catchingUp?'连接已恢复，正在追赶对局进度…':`连接中断，正在重连（第 ${attempt} 次，剩余 ${Math.max(0,Math.ceil(remainingMs/1000))} 秒）…`;
     status.lastChild.onclick=onCancel;

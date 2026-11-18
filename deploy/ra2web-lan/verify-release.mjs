@@ -19,10 +19,16 @@ for (const [name, entry] of Object.entries(version.files)) {
   const bytes = read(name);
   assert.equal(hash(bytes), entry.sha256, name);
   assert.equal(sri(bytes), entry.integrity, name);
+  if (name.startsWith('js/') && name.endsWith('.js')) {
+    for (const reference of bytes.toString().matchAll(/[?&]v=([0-9.]+-r[0-9a-f]+-workshop\d+)/g)) {
+      assert.equal(reference[1], version.assetVersion, 'Stale module import in ' + name);
+    }
+  }
 }
+assert.equal(json('updates.json').version, version.assetVersion.replace(/-r[0-9a-f]+/, ''));
 const worker = read('ra2web-sw.js').toString().split('\n')[0];
 const config = JSON.parse(worker.slice('const config = '.length, -1));
-assert.equal(config.version, '0.87.3-rea0ef5d-workshop15');
+assert.equal(config.version, version.assetVersion);
 for (const [name, integrity] of Object.entries(config.assetIntegrity)) {
   assert.equal(sri(read(name === '/' ? 'index.html' : name.replace(/^\//, ''))), integrity, name);
 }
@@ -42,9 +48,10 @@ for (const name of Object.keys(manifest).filter(name => name.endsWith('.br'))) {
   compressed++;
 }
 const meta = json('deployment/release.json');
-assert.equal(meta.serverVersion, '0.7.0');
+assert.equal(meta.assetVersion, version.assetVersion);
+assert.equal(meta.serverVersion, json('deployment/server/package.json').version);
+assert.match(meta.serverVersion, /^\d+\.\d+\.\d+$/);
 assert.equal(meta.serverSha256, hash(read('deployment/server/server.mjs')));
-assert.equal(json('deployment/server/package.json').version, '0.7.0');
 for (const name of ['catalog.json', 'game-index.json']) {
   const catalog = json('maps/' + name);
   assert.equal(catalog.displayLanguage, 'zh-CN');

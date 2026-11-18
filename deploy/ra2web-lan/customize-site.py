@@ -13,7 +13,7 @@ import os
 
 HERE = Path(__file__).resolve().parent
 UPSTREAM = Path(os.environ.get("RA2_UPSTREAM_DIR", HERE.parent.parent / "vendor/ra2web")).resolve()
-BUILD = "0.87.3-rea0ef5d-workshop15"
+BUILD = "0.87.3-rea0ef5d-workshop17"
 NICK_KEY = "winlife.nickname"
 
 
@@ -293,7 +293,7 @@ def apply(release):
     (release / "reconnect").mkdir(exist_ok=True)
     reconnect_entry = "reconnect/reconnect-ui-" + hashlib.sha256(reconnect_bytes).hexdigest()[:16] + ".js"
     (release / reconnect_entry).write_bytes(reconnect_bytes)
-    reconnect_tag = '<script id="winlife-reconnect" data-version="' + BUILD + '" data-recover-builds="0.87.3-rea0ef5d-workshop14" src="/' + reconnect_entry + '" integrity="' + sri(reconnect_bytes) + '" crossorigin="anonymous"></script>'
+    reconnect_tag = '<script id="winlife-reconnect" data-version="' + BUILD + '" data-recover-builds="0.87.3-rea0ef5d-workshop15,0.87.3-rea0ef5d-workshop14" src="/' + reconnect_entry + '" integrity="' + sri(reconnect_bytes) + '" crossorigin="anonymous"></script>'
     if 'id="winlife-reconnect"' in page:
         import re
         page = re.sub(r'<script id="winlife-reconnect"[^>]*></script>', lambda _: reconnect_tag, page, count=1)

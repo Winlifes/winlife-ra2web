@@ -6,7 +6,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url),acorn=require('acorn'),walk=require('acorn-walk');
 const helper=fs.readFileSync(new URL('./reconnect-ui.js',import.meta.url),'utf8');
 const source=fs.readFileSync(process.env.RA2_CLIENT_BUNDLE,'utf8');
-const methods=new Map();walk.simple(acorn.parse(source,{ecmaVersion:'latest',sourceType:'module'}),{MethodDefinition(n){const key=n.key?.name;if(key&&['reconnectAfterStall','sendPlayerActions','wlResendPlayerActions','resumeStall','closeForStallReconnect','handleCommsLag'].includes(key))methods.set(key,source.slice(n.start,n.end));}});
+const methods=new Map();walk.simple(acorn.parse(source,{ecmaVersion:'latest',sourceType:'module'}),{MethodDefinition(n){const key=n.key?.name,body=source.slice(n.start,n.end);if(key&&['reconnectAfterStall','wlLeaveGame','leaveGame','sendPlayerActions','wlResendPlayerActions','resumeStall','closeForStallReconnect','handleCommsLag'].includes(key)||key==='initGameMenuEvents'&&body.includes('this.wlLeaveGame()'))methods.set(key,body);}});
 const own=(value,key)=>JSON.parse(value.get(key)||'null');
 function helperFixture(storage=new Map(),build='test-build',recoverBuilds=''){
   let now=1000,perf=0,interval;const body={children:[],append(e){this.children.push(e);}};
@@ -65,9 +65,9 @@ function controller({failures=0,terminal=false,cancel=false,passive=false}={}){
   let now=0,attempts=0,resends=0,fatal=0,cleared=0,status=0,cancelled=false;
   class GservError extends Error{static Code={InstanceNonExistent:5,InstanceVersMismatch:9,InstanceNotAllowed:7,BadLogin:1};constructor(){super('expired');this.code=5;}}
   const ui={showStatus(){status++},hideStatus(){status=0},clear(){cleared++}};
-  const Type=vm.runInNewContext('(class{'+methods.get('reconnectAfterStall')+'})',{Date:{now:()=>now},performance:{now:()=>now},window:{winlifeReconnect:ui},ak:{Ended:2},eu:{StorageKey:{LastConnection:'last'}},Fl:{sleep:async ms=>{now+=ms;if(cancel){cancelled=true;throw Error('cancel')}}},pi:{GservError},Jd:{},za:{},Va:{}});
+  const Type=vm.runInNewContext('(class{'+methods.get('wlLeaveGame')+methods.get('reconnectAfterStall')+'})',{Date:{now:()=>now},performance:{now:()=>now},window:{winlifeReconnect:ui},ak:{Ended:2},eu:{StorageKey:{LastConnection:'last'}},Fl:{sleep:async ms=>{now+=ms;if(cancel){cancelled=true;throw Error('cancel')}}},pi:{GservError},Jd:{},za:{},Va:{}});
   const Lag=vm.runInNewContext('(class{'+methods.get('handleCommsLag')+'})',{}),manager=new Lag();Object.assign(manager,{currentNetworkTurn:passive?1:50,passiveMode:passive,stallReconnectRequested:true,commsLagStartTime:1,commsLagStartTurn:1,commsLagStartReceivedTurn:0,reportLockstepWaitEnd(){},updateLagState(value){this.lagState=value}});
-  const c=new Type();Object.assign(c,{gservStallRoute:{target:'server',gameId:'match',user:'A',pass:'pass'},game:{status:1},gameCancellationSource:{token:{isCancelled:()=>cancelled}},pointer:{unlock(){}},lockstepManager:manager,handleFatalGservClose(){fatal++},gservCon:{closeForStallReconnect(){},async connect(){attempts++;if(terminal)throw new GservError();if(attempts<=failures)throw Error('offline')},async cvers(){},async login(){},async joinGame(){},async resumeStall(){return 20},sendPlayerActive(value){c.sentActive=value},wlResendPlayerActions(){resends++},isOpen(){return true}}});
+  const c=new Type();Object.assign(c,{exitRequests:[],gservStallRoute:{target:'server',gameId:'match',user:'A',pass:'pass'},game:{status:1},gameCancellationSource:{token:{isCancelled:()=>cancelled}},pointer:{unlock(){}},lockstepManager:manager,handleFatalGservClose(){fatal++},gservCon:{async leaveGame(){c.exitRequests.push('leavegame')},closeForStallReconnect(){},async connect(){attempts++;if(terminal)throw new GservError();if(attempts<=failures)throw Error('offline')},async cvers(){},async login(){},async joinGame(){},async resumeStall(){return 20},sendPlayerActive(value){c.sentActive=value},wlResendPlayerActions(){resends++},isOpen(){return true}}});
   return {c,stats:()=>({attempts,resends,fatal,cleared,status})};
 }
 test('native reconnect retries offline attempts, resends pending inputs and permits later disconnections',async()=>{
@@ -82,6 +82,41 @@ test('a background page stays passive after resume and stale lag cannot cause im
 test('expired matches stop retrying and cancelled screens cannot reopen a connection',async()=>{
   const expired=controller({terminal:true});await expired.c.reconnectAfterStall({});assert.deepEqual(expired.stats(),{attempts:1,resends:0,fatal:1,cleared:1,status:0});
   const cancelled=controller({cancel:true});await cancelled.c.reconnectAfterStall({});assert.deepEqual(cancelled.stats(),{attempts:0,resends:0,fatal:0,cleared:0,status:0});
+});
+
+test('intentional exit sends both available exit paths and prevents every later reconnect attempt',async()=>{
+  const f=controller();
+  f.c.returnTo={params:{winlifeResume:{gameChannelName:'#room'}}};
+  f.c.wolService={getConnection:()=>({isOpen:()=>true,async abandonGame(channel,id){f.c.exitRequests.push([channel,id])}})};
+  await f.c.wlLeaveGame();
+  assert.equal(f.c.wlLeavingGame,true);assert.equal(f.stats().cleared,1);
+  assert.deepEqual(f.c.exitRequests,['leavegame',['#room','match']]);
+  await f.c.reconnectAfterStall({});assert.equal(f.stats().attempts,0);assert.equal(f.stats().resends,0);
+});
+
+test('quitting during an in-flight reconnect cannot re-enable the departed player',async()=>{
+  const f=controller();let joined=0;
+  f.c.gservCon.connect=async()=>f.c.wlLeaveGame();f.c.gservCon.joinGame=async()=>{joined++};
+  await f.c.reconnectAfterStall({});
+  assert.equal(joined,0);assert.equal(f.c.sentActive,undefined);assert.equal(f.stats().resends,0);assert.equal(f.stats().fatal,0);
+  assert.equal(f.c.stallReconnectInFlight,false);
+});
+
+test('the real quit menu works while stalled without waiting for a simulation turn',async()=>{
+  let quit,exits=0,cleared=0,navigated;
+  const Type=vm.runInNewContext('(class{'+methods.get('wlLeaveGame')+methods.get('initGameMenuEvents')+'})',{
+    window:{winlifeReconnect:{clear(){cleared++}}},eu:{StorageKey:{LastConnection:'last'}},QS(){},qd(){},
+    Fl:{sleep:async()=>{}},Jd:{ScreenType:{MainMenuRoot:1}},Va:{ScreenType:{Home:2}},za:{MainMenuRoute:class{}},t1:()=>true
+  });
+  const controller=new Type(),room={params:{winlifeResume:{gameChannelName:'#room'}}};
+  Object.assign(controller,{returnTo:room,isSinglePlayer:false,lagState:true,gservStallRoute:{gameId:'match'},
+    controller:{goToScreen(screen,params){navigated=params.route}},pointer:{lock(){},setVisible(){}},playerUi:{dispose(){}},
+    gservCon:{isOpen:()=>true,async leaveGame(){exits++},onClose:{unsubscribe(){}},close(){}},
+    gameCancellationSource:{cancel(){}},gameTurnMgr:{dispose(){}},sendGameRes(){},logGame(){},
+    lockstepManager:{onActionsSent:{subscribeOnce(){throw Error('must not wait for blocked turns')}}}});
+  const menu={onOpen:{subscribe(){}},onQuit:{subscribe(fn){quit=fn}},onObserve:{subscribe(){}},onCancel:{subscribe(){}}};
+  controller.initGameMenuEvents(menu,{play(){}},{gameOpts:{}},{isObserver:false},{push(){throw Error('must use the acknowledged exit protocol')}},{});
+  await quit();assert.equal(exits,1);assert.ok(cleared>=1);assert.equal(navigated,room);assert.equal(controller.wlLeavingGame,true);
 });
 
 const ast=acorn.parse(source,{ecmaVersion:'latest',sourceType:'module'});

@@ -15,7 +15,7 @@ const MAX_PARTICIPANTS = 17; // 16 combatants and one dedicated observer.
 const MAX_ROOMS = 8;
 const NAME = /^[A-Za-z0-9_-]{2,15}$/;
 const PREFIX = 2;
-const SERVER_VERSION = '0.7.0';
+const SERVER_VERSION = '0.7.1';
 
 function parseLine(line) {
   const separator = line.indexOf(' :');
@@ -34,6 +34,16 @@ function validateActions(payload) {
     if (offset > payload.length) return false;
   }
   return offset === payload.length;
+}
+
+function containsResignation(payload) {
+  // Native ActionType.ResignGame is action 3 with no parameters.
+  for (let index = 0, offset = 1; index < payload[0]; index++) {
+    const size = payload.readUInt16LE(offset + 1);
+    if (payload[offset] === 3 && size === 0) return true;
+    offset += 3 + size;
+  }
+  return false;
 }
 
 export async function createLanServer({ port = 18600, host = '127.0.0.1', origin = 'https://lan-game.example.com', dataDir, nicknameOnly = false, pingIntervalMs = 2000, heartbeatTimeoutMs = 15000, reconnectGraceMs = 300000, networkPolicy = {}, log = () => {} } = {}) {
@@ -166,9 +176,10 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
   function sendGameServer(client, channel) { send(client, `:${SERVER} GSERV ${channel} :lan Game-Station ${origin.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:')}/gserv`); }
   function leave(client, channel) {
     if (!client.channels.has(channel)) return;
+    const room = rooms.get(channel);
+    if (room?.match) departGame(games.get(room.match.id), client.nick);
     broadcast(channel, `${userPrefix(client)} PART ${channel} :Leaving`);
     client.channels.delete(channel);
-    const room = rooms.get(channel);
     if (room?.host === client.nick) {
       for (const member of members(channel)) {
         send(member, `${userPrefix(client)} KICK ${channel} ${member.nick} :Host left`);
@@ -234,12 +245,12 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
     return client.ws.readyState === WebSocket.OPEN && game.clients.get(client.nick) === client;
   }
   function startIfReady(game) {
-    if (game.started || !game.players.every(player => (game.clients.get(player.name)?.loaded || 0) >= 100)) return;
+    if (game.started || !game.players.every(player => game.departed.has(player.name) || (game.clients.get(player.name)?.loaded || 0) >= 100)) return;
     game.started = true;
     game.startedAt = Date.now();
     game.lastTurnAt = performance.now();
     game.networkRate = new NetworkRateController(networkPlayers(game, game.lastTurnAt), { ...timingPolicy, now: game.lastTurnAt });
-    for (const client of game.clients.values()) { client.timelineReady = true; client.resumed = true; }
+    for (const client of game.clients.values()) if (!game.departed.has(client.nick)) { client.timelineReady = true; client.resumed = true; }
     timelineBroadcast(game, rateMessage(game.networkRate.changes[0]));
     gameBroadcast(game, `:${SERVER} 700 * :Start`);
     log({ event: 'game_started', game: game.id, players: game.players.map(player => player.name), networkTurnMs: game.networkRate.currentMs, inputBufferTurns: 2 });
@@ -250,7 +261,7 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
       const actions = game.pending.get(game.turn) || new Map();
       const active = game.players.filter(player => {
         const client = game.clients.get(player.name);
-        return client?.active && client.ws.readyState === WebSocket.OPEN;
+        return !game.departed.has(player.name) && client?.active && client.ws.readyState === WebSocket.OPEN;
       });
       if (!active.length || active.some(player => !actions.has(player.name))) return;
       const now = performance.now(), waitMs = Math.round(now - game.lastTurnAt);
@@ -269,7 +280,11 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
       header[0] = PREFIX; header[1] = 1; header.writeUInt32LE(game.turn, 2); header[6] = game.players.length;
       parts.push(header);
       for (const player of game.players) {
-        const payload = actions.get(player.name) || Buffer.from([0]);
+        let payload = actions.get(player.name) || Buffer.from([0]);
+        if (game.departed.has(player.name)) {
+          payload = !player.observer && !game.resigned.has(player.name) ? Buffer.from([1, 3, 0, 0]) : Buffer.from([0]);
+        }
+        if (!player.observer && containsResignation(payload)) game.resigned.add(player.name);
         const playerHeader = Buffer.alloc(3);
         playerHeader[0] = player.id; playerHeader.writeUInt16LE(payload.length, 1);
         parts.push(playerHeader, payload);
@@ -286,6 +301,22 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
       game.turn++;
       game.lastTurnAt = performance.now();
       timelineBroadcast(game, packet);
+    }
+  }
+  function departGame(game, name) {
+    if (!game || !game.expected.includes(name) || game.departed.has(name)) return;
+    game.departed.add(name);
+    game.reconnectLeases?.delete(name);
+    rooms.get(game.room)?.disconnected?.delete(name);
+    const client = game.clients.get(name);
+    if (client) { client.active = false; client.timelineReady = false; }
+    // Only unpublished turns may change. The canonical resignation enters
+    // the next shared batch once, so live play and a full replay agree.
+    for (const actions of game.pending.values()) actions.delete(name);
+    log({ event: 'game_player_left', game: game.id, user: name, turn: game.turn });
+    if (game.players) {
+      startIfReady(game);
+      flushTurns(game);
     }
   }
   async function wolCommand(client, line) {
@@ -329,17 +360,19 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
     if (command === 'resumeroom') {
       const channel = args[0], room = rooms.get(channel);
       if (!room?.match || room.match.id !== args[1] || !room.match.participants.includes(client.nick)) return reply(client, 711, `${channel} :Room session has changed`);
+      if (games.get(room.match.id)?.departed.has(client.nick) || room.match.returned.has(client.nick)) return reply(client, 711, `${channel} :Already left this match`);
       if (!client.channels.has(channel)) joinChannel(client, channel, true);
       return reply(client, 710, `${channel} :Room restored`);
     }
     if (command === 'returngame') {
       const channel = args[0], room = rooms.get(channel);
-      if (!room || !client.channels.has(channel)) return reply(client, 711, `${channel} :Room no longer exists`);
+      if (!room || !client.channels.has(channel) || wolUsers.get(client.nick) !== client) return reply(client, 711, `${channel} :Room no longer exists`);
       if (!room.match || room.match.id !== args[1] || !room.match.participants.includes(client.nick)) return reply(client, 711, `${channel} :Room session has changed`);
       // A return is explicit; a transient game socket disconnect must not
       // reopen the room or let a second match start during recovery.
-      const gameClient = games.get(room.match.id)?.clients.get(client.nick);
-      if (gameClient) { gameClient.active = false; gameClient.ws.close(1000, 'Returned to room'); }
+      const game = games.get(room.match.id);
+      departGame(game, client.nick);
+      game?.clients.get(client.nick)?.ws.close(1000, 'Returned to room');
       room.match.returned.add(client.nick);
       if (room.match.participants.every(name => room.match.returned.has(name))) games.delete(room.match.id);
       reply(client, 710, `${channel} :Returned to room`);
@@ -350,6 +383,13 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
       for (const member of members(channel)) if (member.nick !== room.host) broadcast(channel, `${userPrefix(member)} GAMEOPT ${channel} :A0`);
       publishNames(channel); publishRoomState(channel);
       return;
+    }
+    if (command === 'abandongame') {
+      const game = games.get(args[1]);
+      if (!game || game.room !== args[0] || !game.expected.includes(client.nick) || wolUsers.get(client.nick) !== client) return reply(client, 713, ':Match no longer available');
+      departGame(game, client.nick);
+      game.clients.get(client.nick)?.ws.close(1000, 'Left match');
+      return reply(client, 712, ':Left match');
     }
     if (command === 'quit') { client.intentionalQuit = true; client.ws.close(1000, 'Quit'); return; }
     if (command === 'list') {
@@ -371,7 +411,7 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
         rooms.set(channel, room);
       } else {
         const lease = room?.match && games.get(room.match.id)?.reconnectLeases?.get(client.nick);
-        const recovering = room?.match?.participants.includes(client.nick) && (room.disconnected?.has(client.nick) || (lease && lease.key === client.resumeKey && client.resumeEpoch >= lease.epoch));
+        const recovering = room?.match?.participants.includes(client.nick) && !games.get(room.match.id)?.departed.has(client.nick) && (room.disconnected?.has(client.nick) || (lease && lease.key === client.resumeKey && client.resumeEpoch >= lease.epoch));
         if (!room || (room.started && !recovering)) return reply(client, 478, `${channel} :Room closed`);
         if (room.password && room.password !== (args[2] || '')) return reply(client, 475, `${channel} :Incorrect room password`);
         if (members(channel).length >= room.max) return reply(client, 471, `${channel} :Room full`);
@@ -418,7 +458,7 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
       const participants = (args[1] || '').split(',').filter(Boolean);
       if (participants.length < 1 || participants.length > MAX_PARTICIPANTS || new Set(participants).size !== participants.length || participants.some(name => !members(args[0]).some(member => member.nick === name))) return;
       const id = randomUUID();
-      const game = { id, room: args[0], host: room.host, expected: participants, timestamp: Date.now(), clients: new Map(), pending: new Map(), arrivals: new Map(), history: [], hashes: new Map(), turn: 0, started: false };
+      const game = { id, room: args[0], host: room.host, expected: participants, timestamp: Date.now(), clients: new Map(), pending: new Map(), arrivals: new Map(), history: [], hashes: new Map(), departed: new Set(), resigned: new Set(), turn: 0, started: false };
       games.set(id, game); room.started = true;
       room.match = { id, participants: [...participants], returned: new Set() };
       room.options.delete('A');
@@ -486,6 +526,7 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
       const game = games.get(args[0]);
       if (!game?.options) return reply(client, 401, ':Game not created yet');
       if (!game.players.some(player => player.name === client.nick)) return reply(client, 402, ':Not a participant');
+      if (game.departed.has(client.nick)) return reply(client, 402, ':Already left this match');
       if (game.version !== args[1] || game.modHash !== args[2]) return reply(client, 406, ':Version mismatch');
       const lease = game.reconnectLeases?.get(client.nick);
       if (lease && (client.resumeKey !== lease.key || client.resumeEpoch < lease.epoch)) return reply(client, 402, ':This game was resumed by another page');
@@ -493,6 +534,14 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
     }
     const game = client.game;
     if (!game) return reply(client, 401, ':Join a game first');
+    if (game.clients.get(client.nick) !== client) return reply(client, 402, ':Replaced by another connection');
+    if (command === 'leavegame') {
+      departGame(game, client.nick);
+      reply(client, 720, ':Left match');
+      client.ws.close(1000, 'Left match');
+      return;
+    }
+    if (game.departed.has(client.nick)) return reply(client, 402, ':Already left this match');
     if (command === 'gameopts') return reply(client, 500, ':' + game.options);
     if (command === 'loadinfo') return reply(client, 600, ':' + loadInfo(game));
     if (command === 'loaded') {
@@ -536,7 +585,7 @@ export async function createLanServer({ port = 18600, host = '127.0.0.1', origin
   }
   function binaryCommand(client, data) {
     const game = client.game;
-    if (!client.authenticated || !game || game.clients.get(client.nick) !== client || data[0] !== PREFIX || data.length < 2) return;
+    if (!client.authenticated || !game || game.departed.has(client.nick) || game.clients.get(client.nick) !== client || data[0] !== PREFIX || data.length < 2) return;
     if (data[1] === 1) {
       if (!game.started || data.length < 7) return;
       const turn = data.readUInt32LE(2), payload = data.subarray(6);
